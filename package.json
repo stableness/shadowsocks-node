@@ -1,0 +1,42 @@
+{
+  "name": "@stableness/shadowsocks-node",
+  "version": "1.0.0",
+  "description": "Yet another shadowsocks implementation in Node.js",
+  "main": "dist/index.cjs",
+  "scripts": {
+    "build": "tsc && rollup -c",
+    "start": "node dist/bin.js -l :8998 -r pi4:61000 -k $KEY | pino-pretty -t SYS:HH:MM:ss",
+    "non.tsc.start": "NODE_ENV=dev rollup -c && npm start",
+    "dev": "TSC_NONPOLLING_WATCHER=true tsc-watch --onSuccess 'npm run -s non.tsc.start'",
+    "bundle": "NODE_ENV=production npm run build -- --environment BUILD:prod",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "bin": {
+    "ss-node": "dist/bin.cjs"
+  },
+  "files": [
+    "dist/bin.cjs",
+    "dist/index.cjs"
+  ],
+  "license": "GPL-3.0",
+  "sideEffects": false,
+  "dependencies": {
+    "@stableness/wabble": "~0.8.4",
+    "command-line-args": "^5.1.1",
+    "fp-ts": "^2.8.1",
+    "pino": "^6.5.0",
+    "proxy-bind": "^1.2.1",
+    "ramda": "~0.27.1",
+    "rxjs": "7.0.0-beta.2",
+    "tslib": "~2.0.1"
+  },
+  "devDependencies": {
+    "@types/node": "^12.12.54",
+    "@types/pino": "^6.3.0",
+    "@types/ramda": "~0.27.14",
+    "pino-pretty": "^4.1.0",
+    "rollup": "^2.23.1",
+    "tsc-watch": "^4.2.9",
+    "typescript": "~3.9.7"
+  }
+}
