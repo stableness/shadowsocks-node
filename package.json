@@ -12,10 +12,10 @@
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "bin": {
-    "ss-node": "dist/bin.cjs"
+    "ss-node": "dist/bin.js"
   },
   "files": [
-    "dist/bin.cjs",
+    "dist/bin.js",
     "dist/index.cjs"
   ],
   "license": "GPL-3.0",
