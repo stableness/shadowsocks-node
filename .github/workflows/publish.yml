@@ -1,0 +1,52 @@
+name: Publish
+
+
+
+
+
+on:
+  push:
+    tags:
+      - v/*
+
+
+
+
+
+jobs:
+
+  publish:
+    name: Publish
+    runs-on: ubuntu-latest
+
+    steps:
+
+      - uses: actions/checkout@v2
+
+      - uses: actions/setup-node@v1
+        with:
+          node-version: 12.x
+          registry-url: https://registry.npmjs.org/
+
+
+
+      - run: npm install --no-save --no-update-notifier --ignore-scripts
+        env:
+          ADBLOCK: true
+          DISABLE_OPENCOLLECTIVE: true
+          HUSKY_SKIP_INSTALL: true
+
+
+
+      - run: npm run build
+
+
+
+      - run: cat <<< $( jq '{ name, version, bin, files, license, dependencies }' package.json ) > package.json
+
+
+
+      - run: npm publish --tag=next --access=public
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_AUTH_TOKEN }}
+
