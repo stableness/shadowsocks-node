@@ -29,5 +29,7 @@ ss-node
   -k, --key       the PASSWORD
 
   -m, --method    optional, default to chacha20-ietf-poly1305
+
+  -q, --quiet     suppress logging, silent mode
 ```
 

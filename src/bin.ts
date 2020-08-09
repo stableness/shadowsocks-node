@@ -17,12 +17,14 @@ const options = Command([
     { name: 'remote', alias: 'r', type: String },
     { name: 'method', alias: 'm', type: String },
     { name: 'key',    alias: 'k', type: String },
+    { name: 'quiet',  alias: 'q', type: Boolean },
 
 ], { partial: true }) as Partial<{
     local: string,
     remote: string,
     key: string,
     method: string,
+    quiet: boolean,
 }>;
 
 

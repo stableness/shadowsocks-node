@@ -186,10 +186,14 @@ function chain ({ host, port, hook, log }: Opts, remote: Remote) {
 
 
 
-export function load ({ local = '', remote = '', method = '', key = '' }: Options) {
+export function load ({ local = '', remote = '', method = '', key = '', quiet = false }: Options) {
 
     if (R.not(R.all(Boolean, [ local, remote ]))) {
         return console.error(`local [${ local }] or remote [${ remote }] not valid`);
+    }
+
+    if (quiet === true) {
+        logger.level = 'silent';
     }
 
     runner$.subscribe(noop, bind(logger).error);
