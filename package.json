@@ -1,7 +1,7 @@
 {
   "name": "@stableness/shadowsocks-node",
   "version": "1.0.2",
-  "description": "Yet another shadowsocks implementation in Node.js",
+  "description": "Yet another shadowsocks client implementation in Node.js",
   "main": "dist/index.cjs",
   "scripts": {
     "build": "tsc && rollup -c",
