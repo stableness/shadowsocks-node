@@ -22,13 +22,12 @@ npx @stableness/shadowsocks-node
 ```
 ss-node
 
-  -l, --local     127.0.0.1:8080 or :8080 as 0.0.0.0:8080
+  -l, --local     127.0.0.1:8080 or :8080 as 0.0.0.0:8080, socks5
 
   -r, --remote    example.com:4242
 
   -k, --key       the PASSWORD
 
   -m, --method    optional, default to chacha20-ietf-poly1305
-
 ```
 
