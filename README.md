@@ -1,6 +1,8 @@
 [![npm version](https://badgen.net/npm/v/@stableness/shadowsocks-node)](https://www.npmjs.com/package/@stableness/shadowsocks-node)
 [![vulnerabilities](https://snyk.io/test/npm/@stableness/shadowsocks-node/badge.svg)](https://snyk.io/test/npm/@stableness/shadowsocks-node) 
 
+One dedicated Shadowsocks client running in Node.js, the code is heavily brought from [wabble](https://github.com/stableness/wabble) which has far more features e.g.: DoH, http proxy, multi server and filter rules, check that out in such cases.
+
 
 
 # Install
