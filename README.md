@@ -22,7 +22,7 @@ npx @stableness/shadowsocks-node
 ```
 ss-node
 
-  -l, --local     127.0.0.1:8080 or :8080 as 0.0.0.0:8080, socks5
+  -l, --local     socks5://127.0.0.1:8080   or   :8080 as socks5://0.0.0.0:8080
 
   -r, --remote    example.com:4242
 
