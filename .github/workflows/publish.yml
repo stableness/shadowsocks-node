@@ -42,10 +42,6 @@ jobs:
 
 
 
-      - run: cat <<< $( jq '{ name, version, bin, files, license, dependencies }' package.json ) > package.json
-
-
-
       - run: npm publish --tag=next --access=public
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_AUTH_TOKEN }}
