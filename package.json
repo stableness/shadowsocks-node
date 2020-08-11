@@ -7,9 +7,7 @@
     "build": "tsc && rollup -c",
     "start": "node dist/bin.js -l :8998 -r pi4:61000 -k $KEY | pino-pretty -t SYS:HH:MM:ss",
     "non.tsc.start": "NODE_ENV=dev rollup -c && npm start",
-    "dev": "TSC_NONPOLLING_WATCHER=true tsc-watch --onSuccess 'npm run -s non.tsc.start'",
-    "bundle": "NODE_ENV=production npm run build -- --environment BUILD:prod",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "dev": "TSC_NONPOLLING_WATCHER=true tsc-watch --onSuccess 'npm run -s non.tsc.start'"
   },
   "bin": {
     "ss-node": "dist/bin.js"
