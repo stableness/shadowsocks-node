@@ -24,7 +24,7 @@
   "license": "GPL-3.0",
   "sideEffects": false,
   "dependencies": {
-    "@stableness/wabble": "~0.8.4",
+    "@stableness/wabble": "~0.8.5",
     "command-line-args": "^5.1.1",
     "fp-ts": "^2.8.1",
     "pino": "^6.5.0",
