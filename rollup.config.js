@@ -68,6 +68,18 @@ const config = [
     },
 
     // @ts-ignore
+    dev({
+
+        input: dist('bin.js'),
+
+        output: {
+            ...common,
+            file: dist('bin.js'),
+        },
+
+    }),
+
+    // @ts-ignore
     prod({
 
         input: dist('bin.js'),
