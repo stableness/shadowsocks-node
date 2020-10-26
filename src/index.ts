@@ -183,8 +183,8 @@ function chain ({ host, port, hook, log }: Opts, remote: Remote) {
 
 export function load ({ local = '', remote = '', method = '', key = '', quiet = false }: Options) {
 
-    if (R.not(R.all(Boolean, [ local, remote ]))) {
-        return console.error(`local [${ local }] or remote [${ remote }] not valid`);
+    if (R.not(R.all(Boolean, [ local, remote, key ]))) {
+        return console.error(`local [${ local }] or remote [${ remote }] or key [${ key }] not valid`);
     }
 
     if (quiet === true) {
