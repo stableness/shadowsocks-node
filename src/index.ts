@@ -217,6 +217,8 @@ export function load ({ local = '', remote = '', method = '', key = '', quiet = 
 
         }),
 
+        rules: { direct: [], proxy: [], reject: [] },
+
     }));
 
 }
