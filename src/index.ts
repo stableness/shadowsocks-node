@@ -95,15 +95,10 @@ const runner$ = local$.pipe(
 
         o.withLatestFrom(remote$, (opts, remote) => {
 
-            const task = tryCatchToError(() => {
-
-                const conn = chain(opts, remote);
-
-                opts.log.info('Proxy');
-
-                return conn();
-
-            });
+            const task = F.pipe(
+                chain(opts, remote),
+                TE.apFirst(TE.fromIO(() => opts.log.info('Proxy'))),
+            );
 
             return { task, log: opts.log };
 
