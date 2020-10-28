@@ -81,7 +81,7 @@ const runner$ = local$.pipe(
 
     o.tap(R.o(console.info, picking.protocol_host_port)),
 
-    o.switchMap(service => socks5Proxy(service) (logging)),
+    o.switchMap(service => socks5Proxy (service) (logging)),
 
     o.publish(Rx.pipe(
 
@@ -152,7 +152,7 @@ function chain ({ host, port, hook, log }: Opts, remote: Remote) {
 
         TE.fromIOEither,
 
-        TE.map(R.tap(() => {
+        TE.apFirst(TE.fromIO(() => {
 
             if (R.not(logLevel.on.trace)) {
                 return;
