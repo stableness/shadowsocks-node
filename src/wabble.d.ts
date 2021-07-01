@@ -12,14 +12,14 @@ import {
     function as F,
     either as E,
     taskEither as TE,
-    reader as RD,
-    readonlyNonEmptyArray as RNEA,
+    reader as Rd,
+    readonlyNonEmptyArray as NA,
 
 } from 'fp-ts';
 
 import * as R from 'ramda';
 
-import { Observable } from 'rxjs';
+import { Observable, MonoTypeOperatorFunction } from 'rxjs';
 
 import pino from 'pino';
 
@@ -33,11 +33,17 @@ export function noop (): typeof F.constVoid;
 
 
 
+export function rxTap <T> (fn: (arg: T) => void): MonoTypeOperatorFunction<T>;
+
+
+
+
+
 export interface Config {
 
-    readonly services: RNEA.ReadonlyNonEmptyArray<Service>;
+    readonly services: NA.ReadonlyNonEmptyArray<Service>;
 
-    readonly servers: RNEA.ReadonlyNonEmptyArray<Remote>;
+    readonly servers: NA.ReadonlyNonEmptyArray<Remote>;
 
 }
 
@@ -92,7 +98,7 @@ export function cryptoPairs (server: Remote, head: Uint8Array): undefined | {
     dec: NodeJS.ReadWriteStream,
 };
 
-export declare const cryptoPairsC: (server: Remote) => (head: Uint8Array) => ReturnType<typeof cryptoPairs>;
+export declare const cryptoPairsCE: (server: Remote) => (head: Uint8Array) => E.Either<Error, NonNullable<ReturnType<typeof cryptoPairs>>>;
 
 
 
@@ -126,6 +132,12 @@ export function tryCatchToError <A> (f: F.Lazy<Promise<A>>): TE.TaskEither<Error
 
 
 
+export declare const catchKToError: <A extends ReadonlyArray<unknown>, B> (fn: (...args: A) => Promise<B>) => (...args: A) => TE.TaskEither<Error, B>;
+
+
+
+
+
 export function netConnectTo (opts: TcpNetConnectOpts): Socket;
 
 
@@ -154,10 +166,11 @@ export interface Service {
 
 };
 
-export declare const socks5Proxy: (service: Service) => RD.Reader<Logging, Observable<{
+export declare const socks5Proxy: (service: Service) => Rd.Reader<Logging, Observable<{
     host: string,
     port: number,
     hook (...duplex: NodeJS.ReadWriteStream[]): Promise<void>,
+    abort (): void,
 }>>;
 
 
