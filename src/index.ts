@@ -1,11 +1,9 @@
 import {
 
     either as E,
-    io as IO,
     taskEither as TE,
-    pipeable as P,
     function as F,
-    readonlyNonEmptyArray as RNEA,
+    readonlyNonEmptyArray as NA,
 
 } from 'fp-ts';
 
@@ -14,18 +12,16 @@ import * as R from 'ramda';
 import * as Rx from 'rxjs';
 import * as o from 'rxjs/operators';
 
-import { bind } from 'proxy-bind';
-
 import {
 
+    rxTap,
     socks5Proxy,
     socks5Handshake,
-    cryptoPairsC,
+    cryptoPairsCE,
+    catchKToError,
     netConnectTo,
     logging,
     convert,
-    noop,
-    tryCatchToError,
     errToIgnoresBy,
 
 } from '@stableness/wabble/dist/extra.cjs';
@@ -64,14 +60,14 @@ const config$ = new Rx.ReplaySubject<Config>(1);
 
 const local$ = config$.pipe(
     o.pluck('services'),
-    o.map(RNEA.head),
+    o.map(NA.head),
 );
 
 
 
 const remote$ = config$.pipe(
     o.pluck('servers'),
-    o.map(RNEA.head),
+    o.map(NA.head),
     o.shareReplay({ bufferSize: 1, refCount: false }),
 );
 
@@ -79,19 +75,21 @@ const remote$ = config$.pipe(
 
 const runner$ = local$.pipe(
 
-    o.tap(R.o(console.info, picking.protocol_host_port)),
+    rxTap(R.o(console.info, picking.protocol_host_port)),
 
     o.switchMap(service => socks5Proxy (service) (logging)),
 
-    o.publish(Rx.pipe(
+    o.connect(Rx.pipe(
 
-        o.map(({ host, port, hook }) => {
+        o.map(({ host, port, abort, hook }) => ({
 
-            const log = logger.child({ host, port });
+            host,
+            port,
+            abort,
+            hook: catchKToError(hook),
+            log: logger.child({ host, port }),
 
-            return { host, port, hook, log };
-
-        }),
+        })),
 
         o.withLatestFrom(remote$, (opts, remote) => {
 
@@ -104,12 +102,12 @@ const runner$ = local$.pipe(
 
         }),
 
-        o.flatMap(async ({ task, log }) => P.pipe(
+        o.mergeMap(async ({ task, log }) => F.pipe(
             await task(),
             E.mapLeft(err => ({ err, log })),
         )),
 
-        o.tap(E.fold(({ err, log }) => {
+        rxTap(E.fold(({ err, log }) => {
 
             if (err instanceof Error) {
 
@@ -128,7 +126,7 @@ const runner$ = local$.pipe(
 
         o.ignoreElements(),
 
-        o.retryWhen(Rx.pipe(o.delay(5000))),
+        o.retry({ count: 5, resetOnSuccess: true }),
 
     )),
 
@@ -137,20 +135,21 @@ const runner$ = local$.pipe(
 
 
 
+type Proxy = Rx.ObservedValueOf<ReturnType<ReturnType<typeof socks5Proxy>>>;
 
-type Opts = Rx.ObservedValueOf<ReturnType<ReturnType<typeof socks5Proxy>>> & {
+type Opts = Omit<Proxy, 'hook'> & {
     log: typeof logger,
+    hook: (...args: Parameters<Proxy['hook']>) => TE.TaskEither<Error, void>,
 };
 
-function chain ({ host, port, hook, log }: Opts, remote: Remote) {
+function chain ({ host, port, hook, abort, log }: Opts, remote: Remote) {
 
-    return P.pipe(
+    return F.pipe(
 
-        IO.of(socks5Handshake(host, port).subarray(3)),
-        IO.map(cryptoPairsC(remote)),
-        IO.map(E.fromNullable(Error('Has no crypto to perform'))),
+        TE.rightIO(() => socks5Handshake(host, port).subarray(3)),
+        TE.chainEitherK(cryptoPairsCE(remote)),
 
-        TE.fromIOEither,
+        TE.mapLeft(R.tap(abort)),
 
         TE.apFirst(TE.fromIO(() => {
 
@@ -167,11 +166,9 @@ function chain ({ host, port, hook, log }: Opts, remote: Remote) {
 
         })),
 
-        TE.chain(({ enc, dec }) => tryCatchToError(() => {
+        TE.chain(({ enc, dec }) => {
             return hook(enc, netConnectTo(picking.host_port(remote)), dec);
-        })),
-
-        TE.mapLeft(R.tap(() => hook())),
+        }),
 
     );
 
@@ -191,11 +188,15 @@ export function load ({ local = '', remote = '', method = '', key = '', quiet = 
         logger.level = 'silent';
     }
 
-    runner$.subscribe(noop, bind(logger).error);
+    runner$.subscribe({
+        error (e)  {
+            logger.error(e);
+        },
+    });
 
     config$.next(convert({
 
-        services: RNEA.of({
+        services: NA.of({
 
             uri: R.cond([
                 [ R.startsWith('socks5://'), R.identity                   ],
@@ -205,7 +206,7 @@ export function load ({ local = '', remote = '', method = '', key = '', quiet = 
 
         }),
 
-        servers: RNEA.of({
+        servers: NA.of({
 
             key,
             alg: method || 'chacha20-ietf-poly1305',
