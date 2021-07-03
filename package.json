@@ -1,6 +1,6 @@
 {
   "name": "@stableness/shadowsocks-node",
-  "version": "1.1.0",
+  "version": "1.2.0",
   "description": "Yet another shadowsocks client implementation in Node.js",
   "main": "dist/index.cjs",
   "scripts": {
