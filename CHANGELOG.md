@@ -1,3 +1,15 @@
+<a name="1.2.0"></a>
+## 1.2.0 (2021-07-04)
+
+- upgrade `wabble` to `~0.11.1`
+- upgrade `rxjs` to `^7.1.0`
+- upgrade `fp-ts` to `^2.10.5`
+- upgrade `typescript` to `~4.3.5`
+
+
+
+
+
 <a name="1.1.0"></a>
 ## 1.1.0 (2020-10-28)
 
