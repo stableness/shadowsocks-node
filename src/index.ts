@@ -147,6 +147,7 @@ function chain ({ host, port, hook, abort, log }: Opts, remote: Remote) {
     return F.pipe(
 
         TE.rightIO(() => socks5Handshake(host, port).subarray(3)),
+
         TE.chainEitherK(cryptoPairsCE(remote)),
 
         TE.mapLeft(R.tap(abort)),
@@ -189,7 +190,7 @@ export function load ({ local = '', remote = '', method = '', key = '', quiet = 
     }
 
     runner$.subscribe({
-        error (e)  {
+        error (e) {
             logger.error(e);
         },
     });
