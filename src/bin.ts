@@ -1,8 +1,6 @@
-'use strict';
+import Command from 'command-line-args';
 
-const Command = require('command-line-args') as typeof import('command-line-args');
-
-const { load } = require('./index.cjs') as typeof import('./index');
+import { load } from './index.js';
 
 
 
