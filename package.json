@@ -8,6 +8,9 @@
     "build": "tsc",
     "dev": "TSC_NONPOLLING_WATCHER=true tsc-watch --onSuccess 'npm run -s start'"
   },
+  "engines": {
+    "node": ">= 12.22"
+  },
   "bin": {
     "ss-node": "dist/bin.cjs"
   },
