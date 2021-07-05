@@ -4,11 +4,9 @@
   "description": "Yet another shadowsocks client implementation in Node.js",
   "main": "dist/index.cjs",
   "scripts": {
-    "build": "tsc && rollup -c",
-    "bundle": "NODE_ENV=production npm run build -- --environment BUILD:prod",
     "start": "node dist/bin.js -l :8998 -r pi4:61000 -k $KEY | pino-pretty -t SYS:HH:MM:ss",
-    "non.tsc.start": "NODE_ENV=dev rollup -c && npm start",
-    "dev": "TSC_NONPOLLING_WATCHER=true tsc-watch --onSuccess 'npm run -s non.tsc.start'"
+    "build": "tsc",
+    "dev": "TSC_NONPOLLING_WATCHER=true tsc-watch --onSuccess 'npm run -s start'"
   },
   "bin": {
     "ss-node": "dist/bin.cjs"
