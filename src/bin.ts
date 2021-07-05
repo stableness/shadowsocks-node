@@ -1,4 +1,4 @@
-'use strict';
+#!/usr/bin/env node
 
 const Command = require('command-line-args') as typeof import('command-line-args');
 
