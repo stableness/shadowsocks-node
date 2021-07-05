@@ -2,22 +2,26 @@
   "name": "@stableness/shadowsocks-node",
   "version": "1.2.0",
   "description": "Yet another shadowsocks client implementation in Node.js",
-  "main": "dist/index.cjs",
   "scripts": {
     "start": "node dist/bin.js -l :8998 -r pi4:61000 -k $KEY | pino-pretty -t SYS:HH:MM:ss",
     "build": "tsc",
     "dev": "TSC_NONPOLLING_WATCHER=true tsc-watch --onSuccess 'npm run -s start'"
   },
+  "type": "module",
   "engines": {
     "node": ">= 12.22"
   },
   "bin": {
-    "ss-node": "dist/bin.cjs"
+    "ss-node": "dist/bin.js"
   },
   "files": [
-    "dist/bin.cjs",
-    "dist/index.cjs"
+    "dist/bin.js",
+    "dist/index.js"
   ],
+  "exports": {
+    ".": "./dist/index.js",
+    "./package.json": "./package.json"
+  },
   "repository": "github:stableness/shadowsocks-node",
   "homepage": "https://github.com/stableness/shadowsocks-node",
   "bugs": {
