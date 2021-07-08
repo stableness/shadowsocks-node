@@ -10,7 +10,6 @@ import {
 import * as R from 'ramda';
 
 import * as Rx from 'rxjs';
-import * as o from 'rxjs/operators';
 
 import {
 
@@ -59,16 +58,16 @@ const config$ = new Rx.ReplaySubject<Config>(1);
 
 
 const local$ = config$.pipe(
-    o.pluck('services'),
-    o.map(NA.head),
+    Rx.pluck('services'),
+    Rx.map(NA.head),
 );
 
 
 
 const remote$ = config$.pipe(
-    o.pluck('servers'),
-    o.map(NA.head),
-    o.shareReplay({ bufferSize: 1, refCount: false }),
+    Rx.pluck('servers'),
+    Rx.map(NA.head),
+    Rx.shareReplay({ bufferSize: 1, refCount: false }),
 );
 
 
@@ -77,11 +76,11 @@ const runner$ = local$.pipe(
 
     rxTap(R.o(console.info, picking.protocol_host_port)),
 
-    o.switchMap(service => socks5Proxy (service) (logging)),
+    Rx.switchMap(service => socks5Proxy (service) (logging)),
 
-    o.connect(Rx.pipe(
+    Rx.connect(Rx.pipe(
 
-        o.map(({ host, port, abort, hook }) => ({
+        Rx.map(({ host, port, abort, hook }) => ({
 
             host,
             port,
@@ -91,7 +90,7 @@ const runner$ = local$.pipe(
 
         })),
 
-        o.withLatestFrom(remote$, (opts, remote) => {
+        Rx.withLatestFrom(remote$, (opts, remote) => {
 
             const task = F.pipe(
                 chain(opts, remote),
@@ -102,7 +101,7 @@ const runner$ = local$.pipe(
 
         }),
 
-        o.mergeMap(async ({ task, log }) => F.pipe(
+        Rx.mergeMap(async ({ task, log }) => F.pipe(
             await task(),
             E.mapLeft(err => ({ err, log })),
         )),
@@ -124,9 +123,9 @@ const runner$ = local$.pipe(
 
         }, F.constVoid)),
 
-        o.ignoreElements(),
+        Rx.ignoreElements(),
 
-        o.retry({ count: 5, resetOnSuccess: true }),
+        Rx.retry({ count: 5, resetOnSuccess: true }),
 
     )),
 
