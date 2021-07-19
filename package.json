@@ -9,7 +9,7 @@
   },
   "type": "module",
   "engines": {
-    "node": ">= 12.22"
+    "node": ">=12.22 || >=14.14 || >=16"
   },
   "bin": {
     "ss-node": "dist/bin.js"
