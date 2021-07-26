@@ -134,11 +134,11 @@ const runner$ = local$.pipe(
 
 
 
-type Proxy = Rx.ObservedValueOf<ReturnType<ReturnType<typeof socks5Proxy>>>;
+type Proxies = Rx.ObservedValueOf<ReturnType<ReturnType<typeof socks5Proxy>>>;
 
-type Opts = Omit<Proxy, 'hook'> & {
+type Opts = Omit<Proxies, 'hook'> & {
     log: typeof logger,
-    hook: (...args: Parameters<Proxy['hook']>) => TE.TaskEither<Error, void>,
+    hook: (...args: Parameters<Proxies['hook']>) => TE.TaskEither<Error, void>,
 };
 
 function chain ({ host, port, hook, abort, log }: Opts, remote: Remote) {
