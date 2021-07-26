@@ -38,7 +38,10 @@ jobs:
 
 
 
-      - run: npm run build
+      - name: Build
+        run: |-
+          npm run build-commonjs
+          sed -i 's|"module"|"commonjs"|' package.json
 
 
 
