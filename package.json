@@ -4,7 +4,7 @@
   "description": "Yet another shadowsocks client implementation in Node.js",
   "scripts": {
     "start": "node dist/bin.js -l :8998 -r pi4:61000 -k $KEY | pino-pretty -t SYS:HH:MM:ss",
-    "build": "tsc",
+    "build": "tsc --build",
     "dev": "TSC_NONPOLLING_WATCHER=true tsc-watch --onSuccess 'npm run -s start'"
   },
   "type": "module",
