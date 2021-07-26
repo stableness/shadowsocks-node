@@ -23,9 +23,9 @@ import {
     convert,
     errToIgnoresBy,
 
-} from '@stableness/wabble/dist/extra.cjs';
+} from '@stableness/wabble/dist/extra.js';
 
-import type { Remote, Config } from '@stableness/wabble/dist/extra.cjs';
+import type { Remote, Config } from '@stableness/wabble/dist/extra.js';
 
 import type { Options } from './bin';
 

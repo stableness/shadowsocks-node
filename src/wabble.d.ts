@@ -1,4 +1,4 @@
-declare module '@stableness/wabble/dist/extra.cjs' {
+declare module '@stableness/wabble/dist/extra.js' {
 
 
 
