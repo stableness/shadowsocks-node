@@ -29,7 +29,7 @@
   "dependencies": {
     "@stableness/wabble": "~0.12.0",
     "command-line-args": "^5.1.1",
-    "fp-ts": "^2.10.5",
+    "fp-ts": "^2.11.0",
     "pino": "^6.5.0",
     "ramda": "~0.27.1",
     "rxjs": "^7.2.0"
