@@ -19,10 +19,6 @@
     "dist/bin.js",
     "dist/index.js"
   ],
-  "exports": {
-    ".": "./dist/index.js",
-    "./package.json": "./package.json"
-  },
   "repository": "github:stableness/shadowsocks-node",
   "homepage": "https://github.com/stableness/shadowsocks-node",
   "bugs": {
