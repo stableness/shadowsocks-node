@@ -93,7 +93,7 @@ export type Remote = Stream | AEAD;
 
 
 
-export function cryptoPairs (server: Remote, head: Uint8Array): undefined | {
+export function cryptoPairs (server: Remote, head: Uint8Array): {
     enc: NodeJS.ReadWriteStream,
     dec: NodeJS.ReadWriteStream,
 };
