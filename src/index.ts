@@ -15,17 +15,15 @@ import {
 
     rxTap,
     socks5Proxy,
-    socks5Handshake,
-    cryptoPairsCE,
+    chainSS,
     catchKToError,
-    netConnectTo,
     logging,
     convert,
     errToIgnoresBy,
 
 } from '@stableness/wabble/dist/extra.js';
 
-import type { Remote, Config } from '@stableness/wabble/dist/extra.js';
+import type { Config } from '@stableness/wabble/dist/extra.js';
 
 import type { Options } from './bin';
 
@@ -86,18 +84,18 @@ const runner$ = local$.pipe(
             port,
             abort,
             hook: catchKToError(hook),
-            log: logger.child({ host, port }),
+            logger: logger.child({ host, port }),
 
         })),
 
         Rx.withLatestFrom(remote$, (opts, remote) => {
 
             const task = F.pipe(
-                chain(opts, remote),
-                TE.apFirst(TE.fromIO(() => opts.log.info('Proxy'))),
+                chainSS (remote) (opts),
+                TE.apFirst(TE.fromIO(() => opts.logger.info('Proxy'))),
             );
 
-            return { task, log: opts.log };
+            return { task, log: opts.logger };
 
         }),
 
@@ -130,49 +128,6 @@ const runner$ = local$.pipe(
     )),
 
 );
-
-
-
-
-type Proxies = Rx.ObservedValueOf<ReturnType<ReturnType<typeof socks5Proxy>>>;
-
-type Opts = Omit<Proxies, 'hook'> & {
-    log: typeof logger,
-    hook: (...args: Parameters<Proxies['hook']>) => TE.TaskEither<Error, void>,
-};
-
-function chain ({ host, port, hook, abort, log }: Opts, remote: Remote) {
-
-    return F.pipe(
-
-        TE.rightIO(() => socks5Handshake(host, port).subarray(3)),
-
-        TE.chainEitherK(cryptoPairsCE(remote)),
-
-        TE.mapLeft(R.tap(abort)),
-
-        TE.apFirst(TE.fromIO(() => {
-
-            if (R.not(logLevel.on.trace)) {
-                return;
-            }
-
-            const merge = R.converge(R.mergeLeft, [
-                picking.protocol_host_port,
-                R.o(picking.type_algorithm, R.prop('cipher')),
-            ]);
-
-            log.child({ proxy: merge(remote) }).trace('Proxy');
-
-        })),
-
-        TE.chain(({ enc, dec }) => {
-            return hook(enc, netConnectTo(picking.host_port(remote)), dec);
-        }),
-
-    );
-
-}
 
 
 

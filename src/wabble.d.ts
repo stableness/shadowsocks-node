@@ -19,7 +19,13 @@ import {
 
 import * as R from 'ramda';
 
-import { Observable, MonoTypeOperatorFunction } from 'rxjs';
+import type {
+
+    Observable,
+    ObservedValueOf,
+    MonoTypeOperatorFunction,
+
+} from 'rxjs';
 
 import pino from 'pino';
 
@@ -99,6 +105,19 @@ export function cryptoPairs (server: Remote, head: Uint8Array): {
 };
 
 export declare const cryptoPairsCE: (server: Remote) => (head: Uint8Array) => E.Either<Error, NonNullable<ReturnType<typeof cryptoPairs>>>;
+
+
+
+
+
+type Proxies = ObservedValueOf<ReturnType<ReturnType<typeof socks5Proxy>>>;
+
+type Opts = Omit<Proxies, 'hook'> & {
+    logger: typeof logger,
+    hook: (...args: Parameters<Proxies['hook']>) => TE.TaskEither<Error, void>,
+};
+
+export declare const chainSS: (server: Remote) => (opts: Opts) => TE.Either<Error, void>;
 
 
 
