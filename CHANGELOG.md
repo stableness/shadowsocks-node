@@ -1,3 +1,18 @@
+<a name="1.3.0"></a>
+## 1.3.0 (2021-08-11)
+
+- fixing stream cipher
+- native **ESM** during dev mode
+- more code reuse from **wabble**
+- pkgs:
+  - upgrade `wabble` to `~0.12.3`
+  - upgrade `fp-ts` to `^2.11.1`
+  - upgrade `rxjs` to `^7.2.0`
+
+
+
+
+
 <a name="1.2.0"></a>
 ## 1.2.0 (2021-07-04)
 
