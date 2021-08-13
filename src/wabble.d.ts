@@ -117,7 +117,7 @@ type Opts = Omit<Proxies, 'hook'> & {
     hook: (...args: Parameters<Proxies['hook']>) => TE.TaskEither<Error, void>,
 };
 
-export declare const chainSS: (server: Remote) => (opts: Opts) => TE.Either<Error, void>;
+export declare const chainSS: (server: Remote) => (opts: Opts) => TE.TaskEither<Error, void>;
 
 
 
