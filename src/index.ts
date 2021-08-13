@@ -72,9 +72,14 @@ const remote$ = config$.pipe(
 
 const runner$ = local$.pipe(
 
-    rxTap(R.o(console.info, picking.protocol_host_port)),
+    rxTap(F.flow(
+        picking.protocol_host_port,
+        console.info,
+    )),
 
-    Rx.switchMap(service => socks5Proxy (service) (logging)),
+    Rx.map(socks5Proxy),
+
+    Rx.switchMap(F.apply(logging)),
 
     Rx.connect(Rx.pipe(
 
@@ -88,23 +93,17 @@ const runner$ = local$.pipe(
 
         })),
 
-        Rx.withLatestFrom(remote$, (opts, remote) => {
+        Rx.withLatestFrom(remote$, (opts, remote) => F.pipe(
 
-            const task = F.pipe(
-                chainSS (remote) (opts),
-                TE.apFirst(TE.fromIO(() => opts.logger.info('Proxy'))),
-            );
+            chainSS (remote) (opts),
+            TE.apFirst(TE.fromIO(() => opts.logger.info('Proxy'))),
+            TE.mapLeft(err => ({ err, log: opts.logger })),
 
-            return { task, log: opts.logger };
-
-        }),
-
-        Rx.mergeMap(async ({ task, log }) => F.pipe(
-            await task(),
-            E.mapLeft(err => ({ err, log })),
         )),
 
-        rxTap(E.fold(({ err, log }) => {
+        Rx.mergeMap(task => task()),
+
+        rxTap(E.mapLeft(({ err, log }) => {
 
             if (err instanceof Error) {
 
@@ -119,7 +118,7 @@ const runner$ = local$.pipe(
 
             log.error(err as any);
 
-        }, F.constVoid)),
+        })),
 
         Rx.ignoreElements(),
 
