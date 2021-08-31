@@ -132,10 +132,10 @@ const runner$ = local$.pipe(
 
 
 
-export function load ({ local = '', remote = '', method = '', key = '', quiet = false }: Options) {
+export function load ({ local = '', remote = '', method: alg, key, quiet = false }: Options) {
 
-    if (R.not(R.all(Boolean, [ local, remote, key ]))) {
-        return console.error(`local [${ local }] or remote [${ remote }] or key [${ key }] not valid`);
+    if (R.not(R.all(Boolean, [ local, remote ]))) {
+        return console.error(`local [${ local }] or remote [${ remote }] not valid`);
     }
 
     if (quiet === true) {
@@ -163,7 +163,7 @@ export function load ({ local = '', remote = '', method = '', key = '', quiet = 
         servers: NA.of({
 
             key,
-            alg: method || 'chacha20-ietf-poly1305',
+            alg,
 
             uri: R.cond([
                 [ R.startsWith('ss://'), R.identity        ],
