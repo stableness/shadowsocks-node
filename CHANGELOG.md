@@ -1,3 +1,15 @@
+<a name="1.3.1"></a>
+## 1.3.1 (2021-09-06)
+
+- support [SIP002](https://shadowsocks.org/en/wiki/SIP002-URI-Scheme.html) scheme 
+- pkgs:
+  - upgrade `wabble` to `~0.12.5`
+  - upgrade `typescript` to `~4.4.2`
+
+
+
+
+
 <a name="1.3.0"></a>
 ## 1.3.0 (2021-08-11)
 
