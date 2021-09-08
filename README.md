@@ -31,6 +31,10 @@ ss-node
                   ss://base64url( method:password )@example.com:4242
                   ss://base64( method:password@example.com:4242 )
 
+  -s, --subscribe path to local file or remote http page contains multiline addresses
+
+  -f, --refresh   reload subscription address in seconds, default to 3600 (1 hour)
+
   -k, --key       overwrite the PASSWORD
 
   -m, --method    optional overwrite the method, default to chacha20-ietf-poly1305
