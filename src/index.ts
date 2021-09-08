@@ -1,8 +1,14 @@
 import {
 
+    io,
+    ioEither as IoE,
+    function as F,
+    option as O,
+    reader as Rd,
+    random as Rnd,
     either as E,
     taskEither as TE,
-    function as F,
+    readonlyArray as A,
     readonlyNonEmptyArray as NA,
 
 } from 'fp-ts';
@@ -13,6 +19,8 @@ import * as Rx from 'rxjs';
 
 import {
 
+    run,
+    rxOf,
     rxTap,
     socks5Proxy,
     chainSS,
@@ -20,10 +28,12 @@ import {
     logging,
     convert,
     errToIgnoresBy,
+    readOptionalString,
+    crawlRowsStartsBy,
 
 } from '@stableness/wabble/dist/extra.js';
 
-import type { Config } from '@stableness/wabble/dist/extra.js';
+import type { Config, BaseURI } from '@stableness/wabble/dist/extra.js';
 
 import type { Options } from './bin';
 
@@ -55,29 +65,33 @@ const config$ = new Rx.ReplaySubject<Config>(1);
 
 
 
+
+
 const local$ = config$.pipe(
+    Rx.first(),
     Rx.pluck('services'),
-    Rx.map(NA.head),
 );
 
 
 
 const remote$ = config$.pipe(
     Rx.pluck('servers'),
-    Rx.map(NA.head),
-    Rx.shareReplay({ bufferSize: 1, refCount: false }),
+    Rx.map(Rnd.randomElem),
 );
 
 
 
 const runner$ = local$.pipe(
 
-    rxTap(F.flow(
+    rxTap(NA.map(F.flow(
         picking.protocol_host_port,
         console.info,
-    )),
+    ))),
 
-    Rx.map(socks5Proxy),
+    Rx.map(F.flow(
+        Rd.traverseArray(socks5Proxy),
+        Rd.map(services => Rx.merge(...services)),
+    )),
 
     Rx.switchMap(F.apply(logging)),
 
@@ -93,21 +107,21 @@ const runner$ = local$.pipe(
 
         })),
 
-        Rx.withLatestFrom(remote$, (opts, remote) => F.pipe(
+        Rx.withLatestFrom(remote$, (opts, random) => F.pipe(
 
-            chainSS (remote) (opts),
+            chainSS (random()) (opts),
             TE.apFirst(TE.fromIO(() => opts.logger.info('Proxy'))),
             TE.mapLeft(err => ({ err, log: opts.logger })),
 
         )),
 
-        Rx.mergeMap(task => task()),
+        Rx.mergeMap(run),
 
         rxTap(E.mapLeft(({ err, log }) => {
 
             if (err instanceof Error) {
 
-                const code = R.propOr('unknown', 'code', err) as string;
+                const code: string = R.propOr('unknown', 'code', err);
 
                 if (errToIgnoresBy(code)) {
                     logLevel.on.trace && log.trace(err);
@@ -116,7 +130,7 @@ const runner$ = local$.pipe(
 
             }
 
-            log.error(err as any);
+            log.error(err);
 
         })),
 
@@ -132,49 +146,166 @@ const runner$ = local$.pipe(
 
 
 
-export function load ({ local = '', remote = '', method: alg, key, quiet = false }: Options) {
+export const load = loadGen (config$, runner$);
 
-    if (R.not(R.all(Boolean, [ local, remote ]))) {
-        return console.error(`local [${ local }] or remote [${ remote }] not valid`);
-    }
+export function loadGen (
+        config: Rx.Subject<Config>,
+        runner: Rx.Observable<never>,
+) {
 
-    if (quiet === true) {
-        logger.level = 'silent';
-    }
+    return function (opts: Options) {
 
-    runner$.subscribe({
-        error (e) {
-            logger.error(e);
-        },
-    });
+        if (opts.quiet === true) {
+            logger.level = 'silent';
+        }
 
-    config$.next(convert({
+        const remote = F.pipe(
 
-        services: NA.of({
+            opts.remote,
 
-            uri: R.cond([
+            A.filterMap(readOptionalString),
+
+            A.map(uri => ({
+                uri,
+                key: opts.key,
+                alg: opts.method,
+            } as BaseURI)),
+
+            NA.fromReadonlyArray,
+
+        );
+
+        const subscribe = F.pipe(
+
+            opts.subscribe,
+
+            A.filterMap(readOptionalString),
+
+            A.map(endpoint => ({
+                endpoint,
+                refresh: opts.refresh * 1000,
+                base64: true,
+            })),
+
+            A.map(F.flow(
+                crawlRowsStartsBy('ss://'),
+                Rx.catchError(F.constant(Rx.EMPTY)),
+                Rx.map(NA.map(R.objOf('uri'))),
+            )),
+
+            NA.fromReadonlyArray,
+
+            O.map(NA.unprepend),
+
+            O.map(([ head, tail ]) => Rx.combineLatest([ head, ...tail ])),
+
+        );
+
+        return run(F.pipe(
+
+            opts.local,
+
+            A.filterMap(readOptionalString),
+
+            A.map(R.cond([
                 [ R.startsWith('socks5://'), R.identity                   ],
                 [         R.startsWith(':'), R.concat('socks5://0.0.0.0') ],
                 [                       R.T, R.concat('socks5://')        ],
-            ])(local),
+            ])),
 
-        }),
+            A.map(R.objOf('uri')),
 
-        servers: NA.of({
+            NA.fromReadonlyArray,
 
-            key,
-            alg,
+            IoE.fromOption(() => new Error('empty local address')),
 
-            uri: R.cond([
-                [ R.startsWith('ss://'), R.identity        ],
-                [                   R.T, R.concat('ss://') ],
-            ])(remote),
+            IoE.chainIOK(services => () => F.pipe(
 
-        }),
+                Rd.asks(F.flow(
+                    rxOf,
+                    Rx.map(convert as Rd.Reader<unknown, Config>),
+                )),
 
-        rules: { direct: [], proxy: [], reject: [] },
+                Rd.local((servers: NA.ReadonlyNonEmptyArray<BaseURI>) => ({
 
-    }));
+                    servers,
+
+                    services,
+
+                    rules: { direct: [], proxy: [], reject: [] },
+
+                })),
+
+            )),
+
+            IoE.chain(make => F.pipe(
+
+                remote,
+
+                O.altW(() => O.of(A.empty)),
+
+                O.chain(fst => F.pipe(
+
+                    subscribe,
+
+                    O.map(Rx.pipe(
+
+                        Rx.throwIfEmpty(),
+
+                        Rx.map(NA.flatten),
+
+                        Rx.map(snd => NA.concat (snd) (fst)),
+
+                        Rx.catchError(err => {
+                            logger.error(err, 'crawler fails');
+                            return Rx.EMPTY;
+                        }),
+
+                        A.isNonEmpty(fst)
+                            ? Rx.startWith(fst)
+                            : Rx.identity
+                        ,
+
+                    )),
+
+                )),
+
+                O.alt(() => O.map (rxOf) (remote)),
+
+                O.map(obs$ => IoE.fromIO(() => {
+
+                    return obs$.pipe(
+                        Rx.mergeMap(make),
+                    ).subscribe(config);
+
+                })),
+
+                IoE.fromOption(() => new Error('no remote nor subscription')),
+
+                IoE.flatten,
+
+            )),
+
+            IoE.chainIOK(() => () => {
+
+                return runner.subscribe({
+                    error (err) {
+                        logger.error(err, 'runner fails');
+                    },
+                });
+
+            }),
+
+            IoE.orLeft(F.flow(
+                io.of,
+                io.chainFirst(err => () => {
+                    logger.error(E.toError(err), 'bootstrapping fails');
+                }),
+            )),
+
+        ));
+
+    };
 
 }
 
