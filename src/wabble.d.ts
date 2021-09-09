@@ -37,9 +37,31 @@ export function noop (): typeof F.constVoid;
 
 
 
+export function run <F extends (...arg: unknown[]) => unknown> (fn: F): ReturnType<F>;
 
+
+
+
+
+export function rxOf <T> (v: T): Observable<T>;
 
 export function rxTap <T> (fn: (arg: T) => void): MonoTypeOperatorFunction<T>;
+
+
+
+
+
+export type BaseURI = { readonly uri: NonEmptyString };
+
+
+
+
+
+export type NonEmptyString = string & {
+    readonly NonEmptyString: unique symbol;
+};
+
+export function readOptionalString (s: unknown): O.Option<NonEmptyString>;
 
 
 
@@ -57,7 +79,7 @@ export interface Config {
 
 
 
-export function convert (obj: Object): Config;
+export function convert (obj: unknown): Config;
 
 
 
@@ -170,6 +192,22 @@ export function socks5Handshake (host: string, port: number): Uint8Array;
 
 
 export function errToIgnoresBy (code: string): boolean;
+
+
+
+
+
+
+type Env = {
+    endpoint: string;
+    base64?: boolean;
+    timeout?: number;
+    refresh?: number;
+    retry?: number;
+};
+
+export declare const crawlRowsStartsBy: (...a: readonly string[]) => (e: Env) =>
+    Observable<NA.ReadonlyNonEmptyArray<NonEmptyString>>
 
 
 
