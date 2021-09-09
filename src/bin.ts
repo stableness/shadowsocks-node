@@ -12,18 +12,24 @@ export type Options = typeof options;
 
 const options = Command([
 
-    { name: 'local',  alias: 'l', type: String },
-    { name: 'remote', alias: 'r', type: String },
-    { name: 'method', alias: 'm', type: String },
-    { name: 'key',    alias: 'k', type: String },
-    { name: 'quiet',  alias: 'q', type: Boolean },
+    { name: 'local',     alias: 'l', type: String, multiple: true, defaultValue: [] },
+    { name: 'remote',    alias: 'r', type: String, multiple: true, defaultValue: [] },
+    { name: 'subscribe', alias: 's', type: String, multiple: true, defaultValue: [] },
+    { name: 'refresh',   alias: 'f', type: Number, defaultValue: 60 * 60 },
+    { name: 'method',    alias: 'm', type: String },
+    { name: 'key',       alias: 'k', type: String },
+    { name: 'quiet',     alias: 'q', type: Boolean },
+    { name: 'third_party_providers_use_at_your_own_risk', type: Boolean },
 
-], { partial: true }) as Partial<{
-    local: string,
-    remote: string,
-    key: string,
-    method: string,
-    quiet: boolean,
+], { partial: true }) as Readonly<{
+    local: string[];
+    remote: string[];
+    subscribe: string[];
+    refresh: number;
+    method?: string;
+    key?: string;
+    quiet?: boolean;
+    third_party_providers_use_at_your_own_risk?: boolean,
 }>;
 
 
