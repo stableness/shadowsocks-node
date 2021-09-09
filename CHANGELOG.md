@@ -1,3 +1,16 @@
+<a name="1.4.0"></a>
+## 1.4.0 (2021-09-10)
+
+- support `-s, --subscribe` for subscription
+- support multi CLI args for:
+  - `-l, --local`
+  - `-r, --remote`
+  - `-s, --subscribe`
+
+
+
+
+
 <a name="1.3.1"></a>
 ## 1.3.1 (2021-09-06)
 
