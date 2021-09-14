@@ -30,6 +30,7 @@ import {
     errToIgnoresBy,
     readOptionalString,
     crawlRowsStartsBy,
+    unsafeUnwrapE,
 
 } from '@stableness/wabble/dist/extra.js';
 
@@ -274,15 +275,27 @@ export function loadBy (
 
                 O.alt(() => O.map (rxOf) (remote)),
 
-                O.map(crawler$ => IoE.fromIO(() => {
+                O.map(Rx.pipe(
 
-                    return crawler$.pipe(
+                    Rx.mergeMap(make),
 
-                        Rx.mergeMap(make),
+                    Rx.map(R.unless(
 
-                    ).subscribe(config);
+                        F.constant(opts.enable_deprecated_cipher === true),
 
-                })),
+                        R.over(R.lensProp('servers'), F.flow(
+
+                            NA.filter(({ cipher }) => cipher.type === 'AEAD'),
+                            E.fromOption(() => new Error('empty AEAD ciphers')),
+                            unsafeUnwrapE,
+
+                        )),
+
+                    )),
+
+                )),
+
+                O.map(conf => IoE.fromIO(() => conf.subscribe(config))),
 
                 IoE.fromOption(() => new Error('no remote nor subscription')),
 
