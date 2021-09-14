@@ -24,6 +24,7 @@ const options = Command([
     { name: 'third_party_providers_use_at_your_own_risk', type: Boolean },
 
 ], { partial: true }) as Readonly<{
+
     local: string[];
     remote: string[];
     subscribe: string[];
@@ -31,7 +32,8 @@ const options = Command([
     method?: string;
     key?: string;
     quiet?: boolean;
-    third_party_providers_use_at_your_own_risk?: boolean,
+    third_party_providers_use_at_your_own_risk?: boolean;
+
 }>;
 
 
