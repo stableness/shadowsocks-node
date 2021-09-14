@@ -45,6 +45,8 @@ ss-node
 <details>
 <summary><i>advanced</i></summary>
 
+          --enable_deprecated_cipher
+
           --third_party_providers_use_at_your_own_risk
 </details>
 
