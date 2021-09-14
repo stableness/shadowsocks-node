@@ -1,3 +1,14 @@
+## 1.5.0 (2021-09-20)
+
+- disable Stream cipher by default, unless toggle by CLI `--enable_deprecated_cipher`
+- remove **colatiger** from 3rd party provider
+- pkgs:
+  - upgrade `wabble` to `~0.13.0`
+
+
+
+
+
 ## 1.4.0 (2021-09-10)
 
 - support `-s, --subscribe` for subscription
