@@ -1,4 +1,3 @@
-<a name="1.4.0"></a>
 ## 1.4.0 (2021-09-10)
 
 - support `-s, --subscribe` for subscription
@@ -11,7 +10,6 @@
 
 
 
-<a name="1.3.1"></a>
 ## 1.3.1 (2021-09-06)
 
 - support [SIP002](https://shadowsocks.org/en/wiki/SIP002-URI-Scheme.html) scheme 
@@ -23,7 +21,6 @@
 
 
 
-<a name="1.3.0"></a>
 ## 1.3.0 (2021-08-11)
 
 - fixing stream cipher
@@ -38,7 +35,6 @@
 
 
 
-<a name="1.2.0"></a>
 ## 1.2.0 (2021-07-04)
 
 - upgrade `wabble` to `~0.11.1`
@@ -50,7 +46,6 @@
 
 
 
-<a name="1.1.0"></a>
 ## 1.1.0 (2020-10-28)
 
 - upgrade wabble to v0.9.0
@@ -61,7 +56,6 @@
 
 
 
-<a name="1.0.8"></a>
 ## 1.0.8 (2020-09-15)
 
 - upgrade rxjs to 7.0.0-beta.5
@@ -70,7 +64,6 @@
 
 
 
-<a name="1.0.7"></a>
 ## 1.0.7 (2020-09-15)
 
 - upgrade wabble to v0.8.5
@@ -79,7 +72,6 @@
 
 
 
-<a name="1.0.6"></a>
 ## 1.0.6 (2020-08-10)
 
 - remove tslib from dependencies
@@ -89,7 +81,6 @@
 
 
 
-<a name="1.0.5"></a>
 ## 1.0.5 (2020-08-09)
 
 - add -q, --quiet option to suppress logging
@@ -98,7 +89,6 @@
 
 
 
-<a name="1.0.0"></a>
 ## 1.0.0 (2020-08-08)
 
 first release
