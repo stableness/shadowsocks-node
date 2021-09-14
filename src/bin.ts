@@ -21,6 +21,7 @@ const options = Command([
     { name: 'method',    alias: 'm', type: String },
     { name: 'key',       alias: 'k', type: String },
     { name: 'quiet',     alias: 'q', type: Boolean },
+    { name: 'enable_deprecated_cipher', type: Boolean },
     { name: 'third_party_providers_use_at_your_own_risk', type: Boolean },
 
 ], { partial: true }) as Readonly<{
@@ -32,6 +33,7 @@ const options = Command([
     method?: string;
     key?: string;
     quiet?: boolean;
+    enable_deprecated_cipher?: boolean;
     third_party_providers_use_at_your_own_risk?: boolean;
 
 }>;
