@@ -51,6 +51,12 @@ export function rxTap <T> (fn: (arg: T) => void): MonoTypeOperatorFunction<T>;
 
 
 
+export function unsafeUnwrapE <A> (x: E.Either<unknown, A>): A;
+
+
+
+
+
 export type BaseURI = { readonly uri: NonEmptyString };
 
 
