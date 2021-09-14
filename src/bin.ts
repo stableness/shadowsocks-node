@@ -47,7 +47,6 @@ load({
     ...(options.third_party_providers_use_at_your_own_risk && { subscribe: [
 
         '2v/eerf/qfeerf/hg/ten.rviledsj.ndc//:sptth',
-        'dm.ss/sedon-yar2v/regitaloc/hg/ten.rviledsj.ndc//:sptth',
         'busss/ss/ss_yxorp_eerf/nc-drahnrael/hg/ten.rviledsj.ndc//:sptth',
 
     ].map(R.reverse) }),
