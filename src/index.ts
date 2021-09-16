@@ -174,6 +174,8 @@ export function loadBy (
 
             NA.fromReadonlyArray,
 
+            O.map(rxOf),
+
         );
 
         const subscribe = F.pipe(
@@ -197,10 +199,6 @@ export function loadBy (
             )),
 
             NA.fromReadonlyArray,
-
-            O.map(NA.unprepend),
-
-            O.map(([ head, tail ]) => Rx.combineLatest([ head, ...tail ])),
 
         );
 
@@ -244,36 +242,35 @@ export function loadBy (
             IoE.chain(make => F.pipe(
 
                 remote,
+                O.map(A.prepend),
+                O.ap(subscribe),
 
-                O.altW(() => O.of(A.empty)),
+                O.alt(() => subscribe),
+                O.alt(() => O.map (NA.of) (remote)),
 
-                O.chain(fst => F.pipe(
+                O.map(NA.unprepend),
+                O.map(([ head, tail ]) => Rx.combineLatest([ head, ...tail ])),
 
-                    subscribe,
+                O.map(Rx.pipe(
 
-                    O.map(Rx.pipe(
+                    Rx.throwIfEmpty(),
 
-                        Rx.throwIfEmpty(),
+                    Rx.map(NA.flatten),
 
-                        Rx.map(NA.flatten),
-
-                        Rx.map(snd => NA.concat (snd) (fst)),
-
-                        Rx.catchError(err => {
-                            logger.error(err, 'crawler fails');
-                            return Rx.EMPTY;
-                        }),
-
-                        A.isNonEmpty(fst)
-                            ? Rx.startWith(fst)
-                            : Rx.identity
-                        ,
-
-                    )),
+                    Rx.catchError(err => {
+                        logger.error(err, 'crawler fails');
+                        return Rx.EMPTY;
+                    }),
 
                 )),
 
-                O.alt(() => O.map (rxOf) (remote)),
+                O.map(tail => F.pipe(
+                    remote,
+                    O.match(
+                        () => tail,
+                        head => Rx.concat(head, tail),
+                    ),
+                )),
 
                 O.map(Rx.pipe(
 
