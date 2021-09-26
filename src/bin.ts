@@ -42,7 +42,7 @@ const options = Command([
 
 
 
-load({
+const main = load({
 
     ...options,
 
@@ -54,4 +54,6 @@ load({
     ].map(R.reverse) }),
 
 });
+
+main();
 
