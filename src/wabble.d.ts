@@ -203,6 +203,15 @@ export function errToIgnoresBy (code: string): boolean;
 
 
 
+export class ErrorWithCode extends Error {
+
+    constructor (public readonly code?: string, message?: string)
+
+}
+
+
+
+
 
 type Env = {
     endpoint: string;
