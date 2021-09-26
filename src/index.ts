@@ -31,6 +31,7 @@ import {
     readOptionalString,
     crawlRowsStartsBy,
     unsafeUnwrapE,
+    ErrorWithCode,
 
 } from '@stableness/wabble/dist/extra.js';
 
@@ -172,10 +173,6 @@ export function loadBy (
                 alg: opts.method,
             } as BaseURI)),
 
-            NA.fromReadonlyArray,
-
-            O.map(rxOf),
-
         );
 
         const subscribe = F.pipe(
@@ -186,23 +183,70 @@ export function loadBy (
 
             A.map(endpoint => ({
                 endpoint,
-                retry: 5,
+                retry: 0,
+                refresh: 0,
                 base64: true,
-                timeout: 10 * 1000,
-                refresh: opts.refresh * 1000,
+                timeout: 5_000,
             })),
 
             A.map(F.flow(
                 crawlRowsStartsBy('ss://'),
-                Rx.map(NA.map(R.objOf('uri'))),
-                Rx.catchError(F.constant(Rx.EMPTY)),
+                Rx.map(A.map(R.objOf('uri'))),
+                Rx.catchError(() => Rx.of(A.empty)),
             )),
 
             NA.fromReadonlyArray,
 
+            O.match(
+
+                F.constant(Rx.EMPTY),
+
+                arr => Rx.of(arr).pipe(
+
+                    Rx.repeatWhen(Rx.delay(opts.refresh * 1_000)),
+
+                    Rx.switchMap(o => Rx.from(o).pipe(
+
+                        Rx.mergeAll(),
+
+                        Rx.scan((acc, x) => A.concat (x) (acc), remote),
+
+                    )),
+
+                ),
+
+            ),
+
+            Rx.startWith(remote),
+
+            Rx.filter(A.isNonEmpty),
+
+            Rx.throwIfEmpty(() => new ErrorWithCode('EMPTY')),
+
+            Rx.timeout({
+                first: 6_000,
+                with () {
+                    return Rx.throwError(() => new ErrorWithCode('TIMEOUT'));
+                },
+            }),
+
+            Rx.tap({
+                error (err) {
+
+                    if (err?.code === 'EMPTY') {
+                        logger.error(err, 'no remote nor subscription');
+                    }
+
+                    if (err?.code === 'TIMEOUT') {
+                        logger.error(err, 'init timeout');
+                    }
+
+                },
+            }),
+
         );
 
-        return run(F.pipe(
+        return F.pipe(
 
             opts.local,
 
@@ -218,9 +262,7 @@ export function loadBy (
 
             NA.fromReadonlyArray,
 
-            IoE.fromOption(() => new Error('empty local address')),
-
-            IoE.chainIOK(services => () => F.pipe(
+            O.map(services => F.pipe(
 
                 Rd.asks(F.flow(
                     rxOf,
@@ -239,76 +281,43 @@ export function loadBy (
 
             )),
 
-            IoE.chain(make => F.pipe(
+            E.fromOption(() => new Error('empty local address')),
 
-                remote,
-                O.map(A.prepend),
-                O.ap(subscribe),
+            E.map(make => subscribe.pipe(
 
-                O.alt(() => subscribe),
-                O.alt(() => O.map (NA.of) (remote)),
+                Rx.mergeMap(make),
 
-                O.map(NA.unprepend),
-                O.map(([ head, tail ]) => Rx.combineLatest([ head, ...tail ])),
+                Rx.map(R.unless(
 
-                O.map(Rx.pipe(
+                    F.constant(opts.enable_deprecated_cipher === true),
 
-                    Rx.throwIfEmpty(),
+                    R.over(R.lensProp('servers'), F.flow(
 
-                    Rx.map(NA.flatten),
-
-                    Rx.catchError(err => {
-                        logger.error(err, 'crawler fails');
-                        return Rx.EMPTY;
-                    }),
-
-                )),
-
-                O.map(tail => F.pipe(
-                    remote,
-                    O.match(
-                        () => tail,
-                        head => Rx.concat(head, tail),
-                    ),
-                )),
-
-                O.map(Rx.pipe(
-
-                    Rx.mergeMap(make),
-
-                    Rx.map(R.unless(
-
-                        F.constant(opts.enable_deprecated_cipher === true),
-
-                        R.over(R.lensProp('servers'), F.flow(
-
-                            NA.filter(({ cipher }) => cipher.type === 'AEAD'),
-                            E.fromOption(() => new Error('empty AEAD ciphers')),
-                            unsafeUnwrapE,
-
-                        )),
+                        NA.filter(({ cipher }) => cipher.type === 'AEAD'),
+                        E.fromOption(() => new Error('empty AEAD ciphers')),
+                        unsafeUnwrapE,
 
                     )),
 
                 )),
 
-                O.map(conf => IoE.fromIO(() => conf.subscribe(config))),
-
-                IoE.fromOption(() => new Error('no remote nor subscription')),
-
-                IoE.flatten,
-
             )),
 
-            IoE.chainIOK(() => () => {
+            IoE.fromEither,
 
-                return runner.subscribe({
+            IoE.chain(conf => F.pipe(
+
+                IoE.fromIO(() => runner.subscribe({
                     error (err) {
                         logger.error(err, 'runner fails');
                     },
-                });
+                })),
 
-            }),
+                IoE.chainFirstIOK(sub => () => {
+                    sub.add(conf.subscribe(config));
+                }),
+
+            )),
 
             IoE.orLeft(F.flow(
                 io.of,
@@ -317,7 +326,7 @@ export function loadBy (
                 }),
             )),
 
-        ));
+        );
 
     };
 
