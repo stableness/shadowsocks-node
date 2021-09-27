@@ -148,17 +148,18 @@ const runner$ = local$.pipe(
 
 
 
-export const load = loadBy(config$, runner$);
+export const load = loadBy(config$, runner$, logger);
 
 export function loadBy (
         config: Rx.Subject<Config>,
         runner: Rx.Observable<never>,
+        log: typeof logger,
 ) {
 
     return function (opts: Options) {
 
         if (opts.quiet === true) {
-            logger.level = 'silent';
+            log.level = 'silent';
         }
 
         const remote = F.pipe(
@@ -234,11 +235,11 @@ export function loadBy (
                 error (err) {
 
                     if (err?.code === 'EMPTY') {
-                        logger.error(err, 'no remote nor subscription');
+                        log.error(err, 'no remote nor subscription');
                     }
 
                     if (err?.code === 'TIMEOUT') {
-                        logger.error(err, 'init timeout');
+                        log.error(err, 'init timeout');
                     }
 
                 },
@@ -309,7 +310,7 @@ export function loadBy (
 
                 IoE.fromIO(() => runner.subscribe({
                     error (err) {
-                        logger.error(err, 'runner fails');
+                        log.error(err, 'runner fails');
                     },
                 })),
 
@@ -322,7 +323,7 @@ export function loadBy (
             IoE.orLeft(F.flow(
                 io.of,
                 io.chainFirst(err => () => {
-                    logger.error(E.toError(err), 'bootstrapping fails');
+                    log.error(E.toError(err), 'bootstrapping fails');
                 }),
             )),
 
