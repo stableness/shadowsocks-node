@@ -6,6 +6,7 @@
     "start": "node dist/bin.js -l :8998 -r ss://pi4:61000 -k $KEY | pino-pretty -t SYS:HH:MM:ss",
     "build": "tsc --build",
     "build-commonjs": "tsc --module CommonJS",
+    "lint": "eslint ./ --cache --cache-location ./dist/ --ext .ts -c .eslintrc.yml",
     "dev": "TSC_NONPOLLING_WATCHER=true tsc-watch --onSuccess 'npm run -s start'"
   },
   "type": "module",
