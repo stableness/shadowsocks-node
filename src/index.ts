@@ -233,14 +233,18 @@ export function loadBy (
             }),
 
             Rx.tap({
-                error (err) {
+                error (err: unknown) {
 
-                    if (err?.code === 'EMPTY') {
-                        log.error(err, 'no remote nor subscription');
-                    }
+                    if (err instanceof ErrorWithCode) {
 
-                    if (err?.code === 'TIMEOUT') {
-                        log.error(err, 'init timeout');
+                        if (err.code === 'EMPTY') {
+                            log.error(err, 'no remote nor subscription');
+                        }
+
+                        if (err.code === 'TIMEOUT') {
+                            log.error(err, 'init timeout');
+                        }
+
                     }
 
                 },
