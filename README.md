@@ -56,29 +56,29 @@ ss-node
 
 set local basic auth
 
-    ss-node   -l socks5://username:password@127.0.0.1:8080
+    -l socks5://username:password@127.0.0.1:8080
 
 multi local proxies
 
-    ss-node   -l socks5://127.0.0.1:8080   -l socks5://127.0.0.1:9090
+    -l socks5://127.0.0.1:8080   -l socks5://127.0.0.1:9090
 
 multi remote addresses
 
-    ss-node   -r ss://foo:4242   -r ss://bar:4343
+    -r ss://foo:4242   -r ss://bar:4343
 
 multi subscription addresses
 
-    ss-node   -s https://foo   -s https://bar
+    -s https://foo   -s https://bar
 
 accept deprecated stream ciphers (e.g. `rc4` / `rc4-md5` / `aes-128-cfb` etc.)
 
-    ss-node   --enable_deprecated_cipher
+    --enable_deprecated_cipher
 
 free providers crawling from Internet **USE AT YOUR OWN RISK**
 
-    ss-node   --third_party_providers_use_at_your_own_risk
+    --third_party_providers_use_at_your_own_risk
 
   - (too long...)
 
-        ss-node   --YOLO
+        --YOLO
 
