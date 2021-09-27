@@ -1,6 +1,6 @@
 {
   "name": "@stableness/shadowsocks-node",
-  "version": "1.5.1",
+  "version": "1.5.2",
   "description": "Yet another shadowsocks client implementation in Node.js",
   "scripts": {
     "start": "node dist/bin.js -l :8998 -r ss://pi4:61000 -k $KEY | pino-pretty -t SYS:HH:MM:ss",
