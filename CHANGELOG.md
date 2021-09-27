@@ -1,3 +1,12 @@
+## 1.5.2 (2021-09-27)
+
+- support `--YOLO` as shorten for `--third_party_providers_use_at_your_own_risk`
+- CLI examples in README
+
+
+
+
+
 ## 1.5.1 (2021-09-27)
 
 - refine crawler refreshing schedule
