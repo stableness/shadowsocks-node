@@ -1,0 +1,242 @@
+---
+root: true
+
+
+
+env:
+  node: true
+  es2020: true
+
+
+
+
+
+parser: '@typescript-eslint/parser'
+
+parserOptions:
+  warnOnUnsupportedTypeScriptVersion: true
+  tsconfigRootDir: ./
+  project:
+    - tsconfig.json
+
+
+
+
+
+
+plugins:
+
+  - '@typescript-eslint'
+  - deprecation
+  - import
+  - functional
+
+
+
+
+
+extends:
+
+  - eslint:recommended
+  - plugin:@typescript-eslint/recommended
+  - plugin:@typescript-eslint/recommended-requiring-type-checking
+  - plugin:import/typescript
+  - plugin:functional/lite
+  - plugin:functional/stylistic
+  - plugin:functional/external-recommended
+
+
+
+
+
+rules:
+
+  '@typescript-eslint/restrict-template-expressions': off
+
+  '@typescript-eslint/explicit-module-boundary-types':
+    - error
+
+  functional/prefer-type-literal: off
+  functional/prefer-readonly-type: off
+  functional/no-return-void:
+    - error
+    - ignoreImplicit: true
+
+  indent:
+    - error
+    - 4
+    - SwitchCase: 1
+      FunctionDeclaration:
+        parameters: 2
+      FunctionExpression:
+        parameters: 2
+
+  semi: 'off'
+  '@typescript-eslint/semi':
+    - error
+    - always
+    - omitLastInOneLineBlock: true
+
+  '@typescript-eslint/member-delimiter-style':
+    - error
+    - singleline:
+        delimiter: comma
+
+  max-len:
+    - warn
+    - 80
+    - ignoreUrls: true
+      ignoreComments: true
+      ignoreTemplateLiterals: true
+      ignoreTrailingComments: true
+
+  max-depth:
+    - error
+    - max: 3
+
+  no-param-reassign:
+    - error
+
+  no-unused-vars: 'off'
+  '@typescript-eslint/no-unused-vars':
+    - error
+    - argsIgnorePattern: ^_
+
+  deprecation/deprecation: error
+
+  import/extensions:
+    - error
+    - always
+
+  space-before-function-paren: 'off'
+  '@typescript-eslint/space-before-function-paren':
+    - error
+    - always
+
+  keyword-spacing: 'off'
+  '@typescript-eslint/keyword-spacing':
+    - error
+    - before: true
+      after: true
+
+  brace-style: 'off'
+  '@typescript-eslint/brace-style':
+    - error
+    - 1tbs
+    - allowSingleLine: true
+
+  '@typescript-eslint/type-annotation-spacing':
+    - error
+    - after: true
+
+  '@typescript-eslint/no-namespace':
+    - warn
+
+  no-shadow: 'off'
+  '@typescript-eslint/no-shadow':
+    - error
+    - builtinGlobals: true
+      allow:
+        - URL
+
+  comma-spacing: 'off'
+  '@typescript-eslint/comma-spacing':
+    - error
+    - after: true
+
+  no-throw-literal: 'off'
+  '@typescript-eslint/no-throw-literal':
+    - error
+
+  '@typescript-eslint/unbound-method':
+    - off
+
+  '@typescript-eslint/prefer-readonly':
+    - error
+
+  '@typescript-eslint/prefer-readonly-parameter-types':
+    - off
+
+  '@typescript-eslint/no-extraneous-class':
+    - error
+
+  '@typescript-eslint/no-for-in-array':
+    - error
+
+  '@typescript-eslint/restrict-plus-operands':
+    - error
+    - checkCompoundAssignments: true
+
+  '@typescript-eslint/no-confusing-non-null-assertion':
+    - error
+
+  '@typescript-eslint/no-extra-non-null-assertion':
+    - error
+
+  '@typescript-eslint/prefer-nullish-coalescing':
+    - error
+    - ignoreConditionalTests: true
+
+  '@typescript-eslint/strict-boolean-expressions':
+    - error
+
+  no-await-in-loop:
+    - error
+
+  space-infix-ops:
+    - error
+    - int32Hint: false
+
+  template-curly-spacing:
+    - error
+    - always
+
+  array-bracket-spacing:
+    - error
+    - always
+
+  object-curly-spacing:
+    - error
+    - always
+
+  block-spacing:
+    - error
+    - always
+
+  space-before-blocks:
+    - error
+    - always
+
+  key-spacing:
+    - error
+    - afterColon: true
+      beforeColon: false
+      mode: minimum
+
+  arrow-spacing:
+    - error
+    - after: true
+      before: true
+
+  no-empty:
+    - error
+    - allowEmptyCatch: true
+
+  linebreak-style:
+    - error
+    - unix
+
+  quotes: 'off'
+  '@typescript-eslint/quotes':
+    - error
+    - single
+
+  comma-dangle: 'off'
+  '@typescript-eslint/comma-dangle':
+    - error
+    - always-multiline
+
+  no-cond-assign:
+    - error
+    - always
+
