@@ -45,11 +45,20 @@ const options = Command([
 
 
 
+const thirdParty = R.or(
+    options.third_party_providers_use_at_your_own_risk ?? false,
+    options.YOLO ?? false,
+);
+
+
+
+
+
 const main = load({
 
     ...options,
 
-    ...((options.third_party_providers_use_at_your_own_risk || options.YOLO) && { subscribe: [
+    ...(thirdParty && { subscribe: [
 
         '2v/eerf/qfeerf/hg/ten.rviledsj.ndc//:sptth',
         'busss/ss/ss_yxorp_eerf/nc-drahnrael/hg/ten.rviledsj.ndc//:sptth',
