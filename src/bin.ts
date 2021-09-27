@@ -22,7 +22,9 @@ const options = Command([
     { name: 'key',       alias: 'k', type: String },
     { name: 'quiet',     alias: 'q', type: Boolean },
     { name: 'enable_deprecated_cipher', type: Boolean },
+
     { name: 'third_party_providers_use_at_your_own_risk', type: Boolean },
+    { name: 'YOLO', type: Boolean },
 
 ], { partial: true }) as Readonly<{
 
@@ -35,6 +37,7 @@ const options = Command([
     quiet?: boolean;
     enable_deprecated_cipher?: boolean;
     third_party_providers_use_at_your_own_risk?: boolean;
+    YOLO?: boolean;
 
 }>;
 
@@ -46,7 +49,7 @@ const main = load({
 
     ...options,
 
-    ...(options.third_party_providers_use_at_your_own_risk && { subscribe: [
+    ...((options.third_party_providers_use_at_your_own_risk || options.YOLO) && { subscribe: [
 
         '2v/eerf/qfeerf/hg/ten.rviledsj.ndc//:sptth',
         'busss/ss/ss_yxorp_eerf/nc-drahnrael/hg/ten.rviledsj.ndc//:sptth',
