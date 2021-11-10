@@ -10,13 +10,16 @@ import { load } from './index.js';
 
 
 
+const multiOpts = { type: String, multiple: true, defaultValue: [] };
+
 export type Options = typeof options;
 
 const options = Command([
 
-    { name: 'local',     alias: 'l', type: String, multiple: true, defaultValue: [] },
-    { name: 'remote',    alias: 'r', type: String, multiple: true, defaultValue: [] },
-    { name: 'subscribe', alias: 's', type: String, multiple: true, defaultValue: [] },
+    { name: 'local',     alias: 'l', ...multiOpts },
+    { name: 'remote',    alias: 'r', ...multiOpts },
+    { name: 'subscribe', alias: 's', ...multiOpts },
+
     { name: 'refresh',   alias: 'f', type: Number, defaultValue: 60 * 60 },
     { name: 'method',    alias: 'm', type: String },
     { name: 'key',       alias: 'k', type: String },
