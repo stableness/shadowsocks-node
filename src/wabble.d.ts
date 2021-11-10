@@ -1,3 +1,5 @@
+/* eslint-disable max-len */
+
 declare module '@stableness/wabble/dist/extra.js' {
 
 
@@ -16,8 +18,6 @@ import {
     readonlyNonEmptyArray as NA,
 
 } from 'fp-ts';
-
-import * as R from 'ramda';
 
 import type {
 
@@ -45,7 +45,7 @@ export function run <F extends (...arg: unknown[]) => unknown> (fn: F): ReturnTy
 
 export function rxOf <T> (v: T): Observable<T>;
 
-export function rxTap <T> (fn: (arg: T) => void): MonoTypeOperatorFunction<T>;
+export function rxTap <T> (fn: (arg: T) => unknown): MonoTypeOperatorFunction<T>;
 
 
 
@@ -106,7 +106,7 @@ interface Stream extends Base {
         type: 'Stream';
         algorithm: string;
         keySize: number;
-        ivLength: number,
+        ivLength: number;
     };
 }
 
@@ -115,9 +115,9 @@ interface AEAD extends Base {
         type: 'AEAD';
         algorithm: string;
         keySize: number;
-        saltSize: number,
-        nonceSize: number,
-        tagSize: number,
+        saltSize: number;
+        nonceSize: number;
+        tagSize: number;
     };
 }
 
@@ -128,8 +128,8 @@ export type Remote = Stream | AEAD;
 
 
 export function cryptoPairs (server: Remote, head: Uint8Array): {
-    enc: NodeJS.ReadWriteStream,
-    dec: NodeJS.ReadWriteStream,
+    enc: NodeJS.ReadWriteStream;
+    dec: NodeJS.ReadWriteStream;
 };
 
 export declare const cryptoPairsCE: (server: Remote) => (head: Uint8Array) => E.Either<Error, NonNullable<ReturnType<typeof cryptoPairs>>>;
@@ -141,8 +141,8 @@ export declare const cryptoPairsCE: (server: Remote) => (head: Uint8Array) => E.
 type Proxies = ObservedValueOf<ReturnType<ReturnType<typeof socks5Proxy>>>;
 
 type Opts = Omit<Proxies, 'hook'> & {
-    logger: typeof logger,
-    hook: (...args: Parameters<Proxies['hook']>) => TE.TaskEither<Error, void>,
+    logger: typeof logger;
+    hook: (...args: Parameters<Proxies['hook']>) => TE.TaskEither<Error, void>;
 };
 
 export declare const chainSS: (server: Remote) => (opts: Opts) => TE.TaskEither<Error, void>;
@@ -161,7 +161,7 @@ declare const logger: ReturnType<typeof pino>;
 
 declare const logLevel: {
 
-    on: Record<'trace' | 'debug' | 'info' | 'warn' | 'error' | 'fatal' | 'silent', boolean>,
+    on: Record<'trace' | 'debug' | 'info' | 'warn' | 'error' | 'fatal' | 'silent', boolean>;
 
 };
 
@@ -173,7 +173,7 @@ export declare const logging: { logger: typeof logger, logLevel: typeof logLevel
 
 
 
-export function tryCatchToError <A> (f: F.Lazy<Promise<A>>): TE.TaskEither<Error, A>
+export function tryCatchToError <A> (f: F.Lazy<Promise<A>>): TE.TaskEither<Error, A>;
 
 
 
@@ -203,6 +203,7 @@ export function errToIgnoresBy (code: string): boolean;
 
 
 
+// eslint-disable-next-line functional/no-class
 export class ErrorWithCode extends Error {
 
     constructor (public readonly code?: string, message?: string)
@@ -222,7 +223,7 @@ type Env = {
 };
 
 export declare const crawlRowsStartsBy: (...a: readonly string[]) => (e: Env) =>
-    Observable<NA.ReadonlyNonEmptyArray<NonEmptyString>>
+    Observable<NA.ReadonlyNonEmptyArray<NonEmptyString>>;
 
 
 
@@ -236,14 +237,14 @@ export interface Service {
 
     auth: O.Option<(info: Basic) => boolean>;
 
-};
+}
 
-export declare const socks5Proxy: (service: Service) => Rd.Reader<Logging, Observable<{
-    host: string,
-    port: number,
-    hook (...duplex: NodeJS.ReadWriteStream[]): Promise<void>,
-    abort (): void,
-}>>;
+export declare const socks5Proxy: (service: Service) => Rd.Reader<Logging, Observable<Readonly<{
+    host: string;
+    port: number;
+    hook (...duplex: NodeJS.ReadWriteStream[]): Promise<void>;
+    abort (): void;
+}>>>;
 
 
 
