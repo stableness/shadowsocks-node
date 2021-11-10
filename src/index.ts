@@ -37,7 +37,7 @@ import {
 
 import type { Config, BaseURI } from '@stableness/wabble/dist/extra.js';
 
-import type { Options } from './bin';
+import type { Options } from './bin.js';
 
 
 
@@ -159,6 +159,7 @@ export function loadBy (
     return function (opts: Options) {
 
         if (opts.quiet === true) {
+            // eslint-disable-next-line functional/immutable-data
             log.level = 'silent';
         }
 
