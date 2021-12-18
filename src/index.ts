@@ -148,7 +148,8 @@ const runner$ = local$.pipe(
 
 
 
-export const load = loadBy(config$, runner$, logger);
+export const load: Rd.Reader<Options, IoE.IOEither<Error, Rx.Subscription>>
+    = loadBy(config$, runner$, logger);
 
 export function loadBy (
         config: Rx.Subject<Config>,
@@ -156,7 +157,7 @@ export function loadBy (
         log: typeof logger,
 ) {
 
-    return function (opts: Options) {
+    return function (opts: Options): IoE.IOEither<Error, Rx.Subscription> {
 
         if (opts.quiet === true) {
             // eslint-disable-next-line functional/immutable-data
@@ -311,9 +312,9 @@ export function loadBy (
 
             IoE.fromEither,
 
-            IoE.chain(conf => F.pipe(
+            IoE.chainW(conf => F.pipe(
 
-                IoE.fromIO(() => runner.subscribe({
+                IoE.rightIO(() => runner.subscribe({
                     error (err) {
                         log.error(err, 'runner fails');
                     },
