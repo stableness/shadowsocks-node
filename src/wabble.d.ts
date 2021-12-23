@@ -206,7 +206,7 @@ export function errToIgnoresBy (code: string): boolean;
 // eslint-disable-next-line functional/no-class
 export class ErrorWithCode extends Error {
 
-    constructor (public readonly code?: string, message?: string)
+    constructor (public readonly code?: string, message?: string);
 
 }
 
