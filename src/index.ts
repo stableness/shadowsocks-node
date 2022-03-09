@@ -206,7 +206,7 @@ export function loadBy (
 
                 arr => Rx.of(arr).pipe(
 
-                    Rx.repeatWhen(Rx.delay(opts.refresh * 1_000)),
+                    Rx.repeat({ delay: opts.refresh * 1_000 }),
 
                     Rx.switchMap(o => Rx.from(o).pipe(
 
