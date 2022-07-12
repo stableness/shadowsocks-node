@@ -69,13 +69,13 @@ const config$ = new Rx.ReplaySubject<Config>(1);
 
 const local$ = config$.pipe(
     Rx.first(),
-    Rx.pluck('services'),
+    Rx.map(c => c.services),
 );
 
 
 
 const remote$ = config$.pipe(
-    Rx.pluck('servers'),
+    Rx.map(c => c.servers),
     Rx.map(Rnd.randomElem),
 );
 
