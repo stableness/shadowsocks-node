@@ -10,6 +10,7 @@ import { TcpNetConnectOpts, Socket } from 'net';
 
 import {
 
+    io,
     option as O,
     function as F,
     either as E,
@@ -243,7 +244,7 @@ export declare const socks5Proxy: (service: Service) => Rd.Reader<Logging, Obser
     host: string;
     port: number;
     hook (...duplex: NodeJS.ReadWriteStream[]): Promise<void>;
-    abort (): void;
+    abort (): io.IO<void>;
 }>>>;
 
 
