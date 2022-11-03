@@ -36,4 +36,6 @@ jobs:
           DISABLE_OPENCOLLECTIVE: true
 
       - run: npm run lint
+      
+      - run: npm run build
 
