@@ -1,3 +1,14 @@
+## 1.5.3 (2022-11-04)
+
+- CI add build step
+- pkgs:
+  - upgrade `wabble` to `~0.13.1`
+  - add devDep `@types/pino-std-serializers` on `^2`
+
+
+
+
+
 ## 1.5.2 (2021-09-27)
 
 - support `--YOLO` as shorten for `--third_party_providers_use_at_your_own_risk`
